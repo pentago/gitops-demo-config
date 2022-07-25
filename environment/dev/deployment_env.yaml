@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitops-demo
+spec:
+  template:
+    spec:
+      containers:
+        - name: backend
+          env:
+            - name: PHP_OPCACHE_ENABLE
+              value: '0'

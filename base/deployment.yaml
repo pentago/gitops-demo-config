@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitops-demo
+spec:
+  selector:
+    matchLabels:
+      app: gitops-demo
+      project: gitops-demo
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: 'true'
+      labels:
+        app: gitops-demo
+        project: gitops-demo
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      automountServiceAccountToken: false
+      initContainers:
+        - name: init
+          image: pentago/gitops-demo-backend:latest
+          command: ['sh', '-c', '/tmp/rsync.sh']
+          volumeMounts:
+            - name: init-rsync-script
+              mountPath: /tmp
+            - name: source
+              mountPath: /source
+      containers:
+        - name: backend
+          image: pentago/gitops-demo-backend:latest
+          env:
+            - name: PHP_OPCACHE_ENABLE
+              value: '0'
+          ports:
+            - name: fpm
+              containerPort: 9000
+              protocol: TCP
+          volumeMounts:
+            - name: source
+              mountPath: /var/www/html
+            - name: php-tmp
+              mountPath: /tmp
+          livenessProbe:
+            tcpSocket:
+              port: fpm
+            initialDelaySeconds: 3
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /phpfpmstatus
+            initialDelaySeconds: 5
+          resources:
+            requests:
+              cpu: 250m
+              memory: 500Mi
+          lifecycle:
+            preStop:
+              exec:
+                command: ['/bin/sleep', '10']
+        - name: frontend
+          image: pentago/gitops-demo-frontend:latest
+          env:
+            - name: NGINX_ENTRYPOINT_QUIET_LOGS
+              value: '1'
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+            - name: nginx-tmp
+              mountPath: /tmp
+            - name: source
+              mountPath: /var/www/html
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 3
+          readinessProbe:
+            httpGet:
+              port: http
+              path: /healthz
+            initialDelaySeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          lifecycle:
+            preStop:
+              exec:
+                command: ['/bin/sleep', '10']
+      volumes:
+        - name: init-rsync-script
+          configMap:
+            name: init-rsync.sh
+            items:
+              - key: rsync.sh
+                path: rsync.sh
+            defaultMode: 0700
+        - name: source
+          emptyDir: {}
+        - name: nginx-conf
+          configMap:
+            name: nginx.conf
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+        - name: nginx-tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 10M
+        - name: php-tmp
+          emptyDir: {}

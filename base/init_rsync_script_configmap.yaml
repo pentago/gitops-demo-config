@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-rsync.sh
+data:
+  rsync.sh: |
+    #!/bin/sh
+    set -ex
+    rsync --force --archive --delete --chown 82:101 --chmod 550 /var/www/html/ /source/

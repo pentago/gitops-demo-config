@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - init_rsync_script_configmap.yaml
+  - nginx_configmap.yaml
+  - service.yaml
+  - ingress.yaml
+  - hpa.yaml
+  - deployment.yaml

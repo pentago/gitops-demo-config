@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitops-demo
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: init
+          image: gitops-demo-backend
+      containers:
+        - name: backend
+          image: gitops-demo-backend
+        - name: frontend
+          image: gitops-demo-frontend

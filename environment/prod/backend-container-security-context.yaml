@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitops-demo
+spec:
+  template:
+    spec:
+      containers:
+        - name: backend
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            runAsUser: 82
+            runAsGroup: 82
+            capabilities:
+              drop:
+                - ALL

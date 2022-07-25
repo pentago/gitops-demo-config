@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gitops-demo
+  annotations:
+    cert-manager.io/cluster-issuer: ca-issuer
+    nginx.ingress.kubernetes.io/enable-access-log: 'true'
+    nginx.ingress.kubernetes.io/server-snippet: |
+      real_ip_header CF-Connecting-IP;
+      add_header X-Robots-Tag 'noindex, nofollow';
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: dev.gitops.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gitops-demo
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - dev.gitops.local
+      secretName: dev-gitops-demo-tls

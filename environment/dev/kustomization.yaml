@@ -5,7 +5,7 @@ resources:
 - ../../base
 - namespace.yaml
 
-patches:
+patchesStrategicMerge:
 - deployment_env.yaml
 - ingress.yaml
 
@@ -14,14 +14,14 @@ namespace: gitops-demo-dev
 nameSuffix: -dev
 
 labels:
-- pairs:
+- includeSelectors: true
+  pairs:
     env: dev
-  includeSelectors: true
 
 images:
 - name: pentago/gitops-demo-backend
   newName: pentago/gitops-demo-backend
-  newTag: 10b202a
+  newTag: 8bbe273
 - name: pentago/gitops-demo-frontend
   newName: pentago/gitops-demo-frontend
   newTag: 670658e

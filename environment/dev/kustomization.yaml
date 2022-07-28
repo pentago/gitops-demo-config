@@ -21,7 +21,7 @@ labels:
 images:
 - name: pentago/gitops-demo-backend
   newName: pentago/gitops-demo-backend
-  newTag: 8bbe273
+  newTag: 4152ffb
 - name: pentago/gitops-demo-frontend
   newName: pentago/gitops-demo-frontend
   newTag: 04e3b80

@@ -24,4 +24,4 @@ images:
   newTag: 8bbe273
 - name: pentago/gitops-demo-frontend
   newName: pentago/gitops-demo-frontend
-  newTag: 670658e
+  newTag: 04e3b80

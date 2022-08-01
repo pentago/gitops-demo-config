@@ -5,7 +5,7 @@ resources:
 - ../../base
 - namespace.yaml
 
-patchesStrategicMerge:
+patches:
 - deployment_env.yaml
 - ingress.yaml
 

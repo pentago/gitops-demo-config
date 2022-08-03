@@ -4,6 +4,18 @@ metadata:
   name: gitops-demo
 spec:
   template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: 'app-role'
+        vault.hashicorp.com/agent-inject-secret-env: 'kv/API_KEYS'
+        vault.hashicorp.com/agent-inject-perms-env: '0600'
+        vault.hashicorp.com/agent-inject-template-env: |
+          {{- with secret "kv/API_KEYS" -}}
+          SOME_API_KEY="{{ .Data.data.SOME_API_KEY }}"
+          SOME_OTHER_API_KEY="{{ .Data.data.SOME_OTHER_API_KEY }}"
+          ADDITIONAL_API="{{ .Data.data.ADDITIONAL_API }}"
+          {{- end -}}
     spec:
       initContainers:
         - name: init

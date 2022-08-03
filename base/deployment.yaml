@@ -15,10 +15,11 @@ spec:
         app: gitops-demo
         project: gitops-demo
     spec:
+      serviceAccountName: app
+      automountServiceAccountToken: true
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-      automountServiceAccountToken: false
       initContainers:
         - name: init
           image: pentago/gitops-demo-backend:latest

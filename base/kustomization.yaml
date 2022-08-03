@@ -8,3 +8,4 @@ resources:
   - ingress.yaml
   - hpa.yaml
   - deployment.yaml
+  - sa.yaml
